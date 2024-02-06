@@ -30,3 +30,33 @@ def fetch_gene_expression_data(dataset_name):
     # Rename columns and indices in the DataFrame to more readable forms.
     exp = exp.rename(columns=tables.readable_columns, index=tables.readable_index)
     return exp
+
+def calculate_progeny_scores(expression_data):
+    """
+    Calculate PROGENy scores for the provided gene expression data.
+
+    Parameters:
+    - expression_data (pandas.DataFrame): The gene expression data for which to calculate
+      PROGENy scores. It should have samples as rows and genes as columns.
+
+    Returns:
+    - pandas.DataFrame: A DataFrame containing the PROGENy scores for the specified dataset,
+      with samples as rows and pathways as columns.
+
+    This function uses the decoupler library to compute PROGENy (Pathway RespOnsive GENes)
+    scores, estimating pathway activity based on gene expression data.
+    """
+    # Get the PROGENy network for human organism.
+    progeny = dc.get_progeny(organism='human')
+
+    # Calculate pathway activity scores using machine learning model.
+    result = dc.run_mlm(
+        mat=expression_data, # Input expression data.
+        net=progeny, # Network data (PROGENy).
+        source='source',
+        target='target',
+        weight='weight',
+        verbose=True # Print additional information during calculation.
+    )
+    
+    return result
