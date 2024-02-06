@@ -23,9 +23,9 @@ def fetch_gene_expression_data(dataset_name):
     collection = res.collection.get(dataset_name)
     # Initialize RNA tables for the collection with specified cache directory.
     tables = RNATables(collection)
-    # Extract gene expression data as a pandas DataFrame.
+    # Extract gene expression data as TPM-normalized reads.
     exp = tables.exp
-    # Ensure that column names in the expression DataFrame are strings.
+    # Ensure that column names in the expression DataFrame are strings for renaming.
     exp.columns = exp.columns.astype(str)
     # Rename columns and indices in the DataFrame to more readable forms.
     exp = exp.rename(columns=tables.readable_columns, index=tables.readable_index)
@@ -58,5 +58,5 @@ def calculate_progeny_scores(expression_data):
         weight='weight',
         verbose=True # Print additional information during calculation.
     )
-    
-    return result
+
+    return result[0]
